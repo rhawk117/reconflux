@@ -1,0 +1,100 @@
+line-length = 90
+required-version = "==0.15.2"
+
+fix = true
+unsafe-fixes = true
+
+[lint]
+select = [
+	"E",
+	"W",
+	"F",
+	"I",
+	"UP",
+	"FAST",
+	"S",
+	"ASYNC",
+	"PERF",
+	"B",
+	"SIM",
+	"C4",
+	"DTZ",
+	"PTH",
+	"PT",
+	"A",
+	"LOG",
+	"TC",
+	"PGH",
+	"FURB",
+	"RUF",
+	"TRY",
+	"N",
+	"FLY",
+	"COM",
+	"EXE",
+	"PIE",
+	"C901",
+	"D404",
+	"D417",
+	"D419",
+	"ANN001",
+	"ANN201",
+	"ANN202",
+	"ANN204",
+	"ANN205",
+	"ANN206",
+	"FBT001",
+	"FBT002",
+]
+
+ignore = [
+	"COM812",
+	"PGH003",
+	"RUF001",
+	"RUF002",
+	"RUF003",
+	"RUF006",
+	"RUF012",
+	"RUF029",
+	"TRY400",
+	"TRY003",
+	"TRY301",
+	"S101",
+	"S106",
+	"S104",
+	"S105",
+]
+
+
+[lint.flake8-quotes]
+docstring-quotes = "single"
+
+[lint.flake8-type-checking]
+exempt-modules = ["typing", "typing_extensions"]
+quote-annotations = false
+strict = false
+
+runtime-evaluated-base-classes = [
+	"pydantic.BaseModel",
+	"sqlalchemy.orm.DeclarativeBase",
+]
+
+runtime-evaluated-decorators = [
+	"pydantic.validate_call",
+	"pydantic.dataclasses.dataclass",
+	"fastapi.FastAPI.get",
+	"fastapi.FastAPI.post",
+	"fastapi.FastAPI.put",
+	"fastapi.FastAPI.patch",
+	"fastapi.FastAPI.delete",
+	"fastapi.FastAPI.options",
+	"fastapi.FastAPI.head",
+]
+
+[lint.pylint]
+allow-dunder-method-names = ["__tablename__", "__table_args__"]
+
+[format]
+docstring-code-format = true
+preview = true
+quote-style = "single"
