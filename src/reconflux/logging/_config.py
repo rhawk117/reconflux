@@ -24,7 +24,7 @@ def _parse_log_level(value: int | str) -> int:
         return value
     name = value.strip().upper()
     if name not in _LEVEL_NAMES:
-        raise ValueError(f"Unknown log level: {value!r}")
+        raise ValueError(f'Unknown log level: {value!r}')
     return _LEVEL_NAMES[name]
 
 
@@ -32,8 +32,8 @@ LogLevel = Annotated[int, BeforeValidator(_parse_log_level)]
 
 
 class FormatConfig(BaseModel):
-    fmt: str = "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
-    datefmt: str = "%Y-%m-%d %H:%M:%S"
+    fmt: str = '%(asctime)s | %(levelname)-8s | %(name)s | %(message)s'
+    datefmt: str = '%Y-%m-%d %H:%M:%S'
 
 
 class RichConfig(BaseModel):
@@ -49,11 +49,11 @@ class RichConfig(BaseModel):
 
 class FileConfig(BaseModel):
     enabled: bool = False
-    path: Path = Path("logs/reconflux.log")
+    path: Path = Path('logs/reconflux.log')
     level: LogLevel | None = None
     max_megabytes: int = 5
     backup_count: int = 5
-    encoding: str = "utf-8"
+    encoding: str = 'utf-8'
 
 
 class StreamConfig(BaseModel):
@@ -78,8 +78,8 @@ class LoggingConfig(BaseSettings):
     --------
     TOML file (``reconflux.toml``)::
 
-        logger_name = "myapp"
-        level = "DEBUG"
+        logger_name = 'myapp'
+        level = 'DEBUG'
 
         [rich]
         enabled = true
@@ -87,7 +87,7 @@ class LoggingConfig(BaseSettings):
 
         [file]
         enabled = true
-        path = "logs/myapp.log"
+        path = 'logs/myapp.log'
 
     Python::
 
@@ -95,15 +95,15 @@ class LoggingConfig(BaseSettings):
         config = LoggingConfig()
 
         # Direct construction (takes priority over TOML/env)
-        config = LoggingConfig(level="DEBUG", rich=RichConfig(rich_tracebacks=True))
+        config = LoggingConfig(level='DEBUG', rich=RichConfig(rich_tracebacks=True))
     """
 
     model_config = SettingsConfigDict(
         toml_file=_DEFAULT_LOGGING_TOML_FILE,
-        extra="ignore",
+        extra='ignore',
     )
 
-    logger_name: str = "reconflux"
+    logger_name: str = 'reconflux'
     level: LogLevel = logging.INFO
     propagate: bool = False
     format: FormatConfig = FormatConfig()

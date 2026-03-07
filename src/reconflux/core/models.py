@@ -3,17 +3,20 @@ from typing import Any, Self
 from pydantic import BaseModel, ConfigDict, TypeAdapter
 import dataclasses as dc
 
+
 class ReconfluxModel(BaseModel):
     """
     Base pydantic model for reconflux
     """
+
     model_config = ConfigDict(
-        extra="forbid",
+        extra='forbid',
         populate_by_name=True,
         use_enum_values=True,
         validate_assignment=True,
         str_strip_whitespace=True,
     )
+
 
 class DataclassMixin:
     """Mixin providing dataclass utility methods as instance/class methods."""
@@ -45,4 +48,3 @@ def get_type_adapter[T: Any](type_: type[T]) -> TypeAdapter[T]:
     ``functools.lru_cache`` with a max size of 64
     """
     return TypeAdapter(type_)
-

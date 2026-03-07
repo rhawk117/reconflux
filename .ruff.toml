@@ -1,5 +1,5 @@
 line-length = 90
-required-version = "==0.15.2"
+required-version = ">=0.15.2"
 
 fix = true
 unsafe-fixes = true

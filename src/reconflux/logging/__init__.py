@@ -8,7 +8,7 @@ from reconflux.logging._config import (
     RichConfig,
     FileConfig,
     StreamConfig,
-    LoggingConfig
+    LoggingConfig,
 )
 
 __all__ = (

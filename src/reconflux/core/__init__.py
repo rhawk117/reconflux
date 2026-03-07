@@ -8,5 +8,5 @@ __all__ = (
     'ReconfluxModel',
     'DataclassMixin',
     'ReconfluxWarning',
-    'emit_internal_warning'
+    'emit_internal_warning',
 )

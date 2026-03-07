@@ -35,19 +35,15 @@ class ExcludeLevelFilter(logging.Filter):
 
 
 class LoggerHandle(NamedTuple):
-    """Opaque handle returned by :func:`initialize_logging`."""
     queue_listener: logging.handlers.QueueListener
     queue_handler: logging.handlers.QueueHandler
     logger: logging.Logger
 
     def shutdown(self) -> None:
-        """Stop the queue listener and detach the handler."""
         try:
             self.queue_listener.stop()
         finally:
             self.logger.removeHandler(self.queue_handler)
-
-
 
 
 def new_formatter(config: LoggingConfig) -> logging.Formatter:
@@ -61,7 +57,9 @@ def create_rich_handlers(
 ) -> list[logging.Handler]:
     level = rich.level if rich.level is not None else base_level
 
-    def new_rich_handler(*, stderr: bool, filters: list[logging.Filter]) -> logging.Handler:
+    def new_rich_handler(
+        *, stderr: bool, filters: list[logging.Filter]
+    ) -> logging.Handler:
         console = Console(stderr=stderr)
         handler = RichHandler(
             level=level,
@@ -147,8 +145,6 @@ def create_file_handler(
     return handler
 
 
-
-
 def initialize_logging(config: LoggingConfig | None = None) -> LoggerHandle:
     """Set up async-safe logging from a :class:`LoggingConfig`.
 
@@ -175,10 +171,10 @@ def initialize_logging(config: LoggingConfig | None = None) -> LoggerHandle:
         from pydantic import TypeAdapter
         import tomllib
 
-        with open("pyproject.toml", "rb") as f:
+        with open('pyproject.toml', 'rb') as f:
             raw = tomllib.load(f)
 
-        config = TypeAdapter(LoggingConfig).validate_python(raw["logging"])
+        config = TypeAdapter(LoggingConfig).validate_python(raw['logging'])
         handle = initialize_logging(config)
     """
     config = config or LoggingConfig()
