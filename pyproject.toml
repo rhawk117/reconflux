@@ -7,6 +7,7 @@ requires-python = ">=3.14"
 dependencies = [
     "dnspython>=2.8.0",
     "httpx[http2]>=0.28.1",
+    "phonenumbers>=9.0.25",
     "pydantic>=2.12.5",
     "pydantic-settings>=2.13.1",
     "rich>=14.3.3",
