@@ -8,7 +8,7 @@ class ReconfluxWarning(UserWarning):
     pass
 
 
-def internal_warning(
+def emit_internal_warning(
     message: str,
     *,
     category: type[ReconfluxWarning] = ReconfluxWarning,
