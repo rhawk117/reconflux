@@ -18,7 +18,7 @@ class ReconfluxError(Exception):
     error_code: ClassVar[str] = 'reconflux_error'
 
     def __init__(
-        self, message: str | None = None, *, context: dict[str, Any] | None
+        self, message: str | None = None, *, context: dict[str, Any] | None = None
     ) -> None:
         self.message = message or self.default_message
         self.context = context or {}
@@ -36,3 +36,8 @@ class ReconfluxError(Exception):
             f'{key}={value!r}' for key, value in self.context.items()
         )
         return f'{self.name}: {self.message} [{context_items}]'
+
+
+class ReconfluxValidationError(ReconfluxError):
+    error_code = 'validation_error'
+    default_message = 'One or more validation error(s) occured.'
