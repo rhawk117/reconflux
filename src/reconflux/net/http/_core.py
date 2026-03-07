@@ -4,8 +4,8 @@ from typing import TYPE_CHECKING
 
 import httpx
 
-from reconflux.net.http.errors import HTTPError
-from reconflux.net.http.options import EventHooks, HTTPClientOptions
+from reconflux.net.http._errors import HTTPError
+from reconflux.net.http._options import EventHooks, HTTPClientOptions
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
