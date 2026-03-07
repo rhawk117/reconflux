@@ -38,12 +38,11 @@ def new_async_httpx_client(
     return httpx.AsyncClient(**kwargs)
 
 
-def validate_response(request: httpx.Request, response: httpx.Response) -> None:
+def validate_response(response: httpx.Response) -> None:
     try:
         response.raise_for_status()
     except httpx.HTTPStatusError as exc:
         context = {
-            'method': request.method,
             'url': str(exc.request.url),
             'status_code': exc.response.status_code,
         }
