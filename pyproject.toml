@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "beautifulsoup4>=4.14.3",
     "dnspython>=2.8.0",
     "httpx[http2]>=0.28.1",
     "phonenumbers>=9.0.25",
