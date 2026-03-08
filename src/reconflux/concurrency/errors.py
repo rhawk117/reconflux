@@ -1,8 +1,3 @@
-
-
-
-
-
 from typing import Self
 
 from reconflux.core import ReconfluxError
@@ -13,7 +8,6 @@ class ConcurrencyError(ReconfluxError):
 
 
 class LimiterRegistryError(ConcurrencyError):
-
     @classmethod
     def total_tokens(cls, name: str, total_tokens: int) -> Self:
         return cls(

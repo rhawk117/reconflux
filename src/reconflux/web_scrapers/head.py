@@ -38,6 +38,7 @@ class HeadAnalyzerRuleset:
 
         return 'stylesheet' in rel.lower().split()
 
+
 @dc.dataclass(slots=True)
 class PackageGroups:
     css: list[str] = dc.field(default_factory=list)
@@ -64,7 +65,6 @@ class PackageGroups:
                 packages.cdn_like.append(potential_url)
 
         return packages
-
 
 
 @dc.dataclass(slots=True)
@@ -116,10 +116,6 @@ class MetaTagCategories:
         self.extras[prop] = tag_contents
 
 
-
-
-
-
 @dc.dataclass(slots=True)
 class WebsiteHeadData:
     common: CommonMetaTags
@@ -128,9 +124,7 @@ class WebsiteHeadData:
 
     @classmethod
     def extract_with_ruleset(
-        cls,
-        soup: bs4.BeautifulSoup,
-        ruleset: HeadAnalyzerRuleset
+        cls, soup: bs4.BeautifulSoup, ruleset: HeadAnalyzerRuleset
     ) -> Self:
         common = CommonMetaTags.from_soup(soup)
         packages = PackageGroups.from_soup(soup, ruleset)
@@ -147,6 +141,7 @@ class WebsiteHeadData:
             categories=categories,
             packages=packages,
         )
+
 
 def get_default_ruleset() -> HeadAnalyzerRuleset:
     security_meta_tag_names = {
@@ -178,10 +173,9 @@ def get_default_ruleset() -> HeadAnalyzerRuleset:
         url_tag_attributes=url_tag_attributes,
     )
 
+
 def analyze_html_head(
-    soup: bs4.BeautifulSoup,
-    *,
-    extended_ruleset: HeadAnalyzerRuleset | None = None
+    soup: bs4.BeautifulSoup, *, extended_ruleset: HeadAnalyzerRuleset | None = None
 ) -> WebsiteHeadData:
     ruleset = get_default_ruleset()
     if extended_ruleset:

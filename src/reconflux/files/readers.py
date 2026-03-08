@@ -33,8 +33,6 @@ class BaseFileReader:
         raise NotImplementedError
 
 
-
-
 class ImageReader(BaseFileReader):
     name = 'image'
     _supported_suffixes = {
@@ -165,5 +163,3 @@ class PDFReader(BaseFileReader):
                 is_encrypted=reader.is_encrypted,
                 extra=extra,
             )
-
-

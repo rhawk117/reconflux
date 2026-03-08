@@ -26,13 +26,12 @@ class DNSQueryResult(DataclassMixin):
     nameserver: str | None = None
     port: int | None = None
     response_time_ms: float | None = None
-    answered_at: datetime = dc.field(
-        default_factory=lambda: datetime.now(UTC)
-    )
+    answered_at: datetime = dc.field(default_factory=lambda: datetime.now(UTC))
 
     @property
     def is_empty(self) -> bool:
         return not self.records
+
 
 @dc.dataclass(slots=True)
 class HostResolutionResult(DataclassMixin):
@@ -48,6 +47,7 @@ class HostResolutionResult(DataclassMixin):
     @property
     def is_empty(self) -> bool:
         return not self.ipv4_addresses and not self.ipv6_addresses
+
 
 @dc.dataclass(slots=True)
 class ReverseLookupResult(DataclassMixin):

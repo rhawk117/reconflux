@@ -161,5 +161,3 @@ def fetch_tls_certificate_sync(
         subject_alternative_names=subject_alternative_names,
         raw_certificate=certificate,
     )
-
-

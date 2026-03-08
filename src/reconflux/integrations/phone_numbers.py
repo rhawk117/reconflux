@@ -15,6 +15,7 @@ class PhoneRecord(DataclassMixin):
     """
     Represents the result of a phone number lookup.
     """
+
     phone_number: str
     is_valid: bool
     e164: str | None = None

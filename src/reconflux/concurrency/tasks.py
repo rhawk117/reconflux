@@ -226,4 +226,3 @@ class ConcurrencyIntegrationMixin:
             emit_internal_warning(result.stringify_warnings())
 
         return result
-

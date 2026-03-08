@@ -40,9 +40,9 @@ class RichMetadataMixin:
     def __rich__(self) -> Table:
         return self.as_table()
 
+
 @dc.dataclass(slots=True)
 class BaseFileMetadata(RichMetadataMixin, DataclassMixin):
-
     path: Path
     file_name: str
     mime_type: str | None
@@ -75,6 +75,7 @@ class BaseFileMetadata(RichMetadataMixin, DataclassMixin):
 class GenericFileMetadata(BaseFileMetadata):
     pass
 
+
 @dc.dataclass(slots=True)
 class ImageMetadata(BaseFileMetadata):
     width: int | None = None
@@ -92,6 +93,7 @@ class ImageMetadata(BaseFileMetadata):
             ('Height', _stringify(self.height)),
         ])
         return rows
+
 
 @dc.dataclass(slots=True)
 class PDFMetadata(BaseFileMetadata):
@@ -116,6 +118,7 @@ class PDFMetadata(BaseFileMetadata):
             ('Encrypted', str(self.is_encrypted)),
         ])
         return rows
+
 
 @dc.dataclass(slots=True)
 class SpreadsheetMetadata(BaseFileMetadata):

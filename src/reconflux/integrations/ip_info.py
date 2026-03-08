@@ -1,18 +1,3 @@
-"""
-**reconflux.integrations.ip_info**
------------------
-
-IP address information lookup integrations using the ipinfo.io service.
-
-Three integration variants are provided:
-
-- ``IPInfoLegacyIntegration``: legacy unauthenticated API (``/ip/json``)
-- ``IPInfoLiteIntegration``: new lite unauthenticated API (``/lite/ip/json``)
-- ``IPInfoLookupIntegration``: token-authenticated full API (``/ip?token=TOKEN``)
-"""
-
-from __future__ import annotations
-
 import dataclasses as dc
 from typing import ClassVar
 
@@ -24,6 +9,7 @@ from reconflux.net import http
 
 class _IpInfoResponse(ReconfluxModel):
     """Base model for ipinfo.io API responses. Allows extra fields from the API."""
+
     model_config = ConfigDict(
         extra='ignore',
         populate_by_name=True,
@@ -83,10 +69,10 @@ class IpInfoLookupResponse(IpInfoLiteResponse):
     """
 
 
-
 @dc.dataclass(slots=True)
 class IpRecord(DataclassMixin):
     """Legacy IP record returned by ``IPInfoLegacyIntegration``."""
+
     ip: str
     city: str | None = None
     country: str | None = None
@@ -194,7 +180,6 @@ def create_response_record(response: IpInfoLiteResponse) -> IpLiteRecord:
     )
 
 
-
 class IPInfoLegacyIntegration:
     """
     Legacy unauthenticated ipinfo.io integration.
@@ -202,6 +187,7 @@ class IPInfoLegacyIntegration:
     Queries ``https://ipinfo.io/{ip}/json`` with no token. Returns a minimal
     ``IpRecord`` with basic geolocation fields.
     """
+
     base_url: ClassVar[str] = 'https://ipinfo.io'
 
     def __init__(
@@ -277,7 +263,7 @@ class IPInfoLiteIntegration:
 
     @http.httpx_retry(attempts=3)
     async def _fetch(self, ip: str) -> IpInfoLiteResponse:
-        response = await self._client.get(f'https://ipinfo.io/lite/{ip}/json')
+        response = await self._client.get(f'{self.base_url}/lite/{ip}/json')
         http.validate_response(response)
         return IpInfoLiteResponse.model_validate(response.json())
 
@@ -299,5 +285,3 @@ class IPInfoLiteIntegration:
             raise ValueError(f'{ip} is a bogon address')
 
         return create_response_record(response)
-
-

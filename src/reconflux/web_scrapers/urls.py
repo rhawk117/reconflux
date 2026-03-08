@@ -1,6 +1,3 @@
-
-
-
 import re
 from typing import TYPE_CHECKING, Self
 
@@ -9,6 +6,7 @@ import bs4
 if TYPE_CHECKING:
     from collections.abc import Generator, Iterable
 
+
 def get_default_url_patterns() -> list[str]:
     return [
         r'href="(/_next/data/[^"]+\.json)"',
@@ -16,7 +14,6 @@ def get_default_url_patterns() -> list[str]:
         r'"url":\s*"([^"]+\.json)"',
         r'fetch\(["\']([^"\']+\.json)["\']',
     ]
-
 
 
 class URLScraper:

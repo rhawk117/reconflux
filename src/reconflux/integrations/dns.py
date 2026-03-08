@@ -73,7 +73,7 @@ class DnsResolveTask(DispatchableTask[list[str]]):
     record_type: DNSRecordType
 
     def get_task_name(self) -> str:
-        return f'reconflux.dns_resolve:{self.domain}_{self.record_type}'
+        return self.record_type
 
     async def __call__(self) -> list[str]:
         try:
@@ -174,23 +174,7 @@ class DNSIntegration(ConcurrencyIntegrationMixin):
             DnsResolveTask(domain=domain, client=self.client, record_type=record_type)
             for record_type in DNSRecordType
         )
-
-        def get(rt: DNSRecordType) -> list[str]:
-            return results.values.get(f'reconflux.dns_resolve:{domain}_{rt}', [])
-
-        return DomainRecord(
-            domain=domain,
-            a=get(DNSRecordType.A),
-            aaaa=get(DNSRecordType.AAAA),
-            cname=get(DNSRecordType.CNAME),
-            mx=get(DNSRecordType.MX),
-            ns=get(DNSRecordType.NS),
-            ptr=get(DNSRecordType.PTR),
-            soa=get(DNSRecordType.SOA),
-            srv=get(DNSRecordType.SRV),
-            txt=get(DNSRecordType.TXT),
-            caa=get(DNSRecordType.CAA),
-        )
+        return DomainRecord(domain=domain, **results.values)
 
     async def reverse_search(self, *ips: str) -> ReverseSearchResult:
         """

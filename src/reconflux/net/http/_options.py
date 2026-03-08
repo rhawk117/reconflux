@@ -1,4 +1,3 @@
-
 from collections.abc import Awaitable, Callable, Mapping
 from ssl import SSLContext  # noqa: TC003
 from typing import Annotated, Any, Literal, TypedDict

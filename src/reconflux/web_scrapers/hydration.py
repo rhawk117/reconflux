@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any, Literal, Self
 
 import bs4
 
-from reconflux.integrations.web_scraping.scrapers import parser_utils
+from reconflux.web_scrapers import parser_utils
 
 if TYPE_CHECKING:
     from collections.abc import Generator
@@ -20,10 +20,6 @@ def get_default_hydration_selectors() -> set[str]:
     }
 
 
-def is_dunder(var_name: str) -> bool:
-    return var_name.startswith('__') and var_name.endswith('__')
-
-
 def get_default_window_regexes() -> list[re.Pattern]:
     patterns = [
         r'window\.(__\w+__)\s*=\s*({[^<]*?});',
@@ -32,6 +28,10 @@ def get_default_window_regexes() -> list[re.Pattern]:
         r'(\w+)\s*=\s*({(?:[^{}]|{[^}]*})*})\s*;',
     ]
     return [re.compile(pattern, re.MULTILINE | re.DOTALL) for pattern in patterns]
+
+
+def is_dunder(var_name: str) -> bool:
+    return var_name.startswith('__') and var_name.endswith('__')
 
 
 @dc.dataclass(slots=True)
@@ -139,5 +139,6 @@ def analyze_site_hydration(
     window_variables = list(window_scraper.scaniter_window_vars(response_text))
 
     return HydrationScrapperResults(
-        window_variables=window_variables, selector_matches=selector_matches
+        window_variables=window_variables,
+        selector_matches=selector_matches,
     )

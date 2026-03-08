@@ -45,7 +45,6 @@ def new_async_dns_resolver(
     return resolver
 
 
-
 class DNSClient:
     __slots__ = (
         '_options',

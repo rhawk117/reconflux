@@ -8,11 +8,7 @@ class DNSResolutionError(ReconfluxError):
     error_code = 'dns_resolution_error'
 
     @classmethod
-    def query(
-        cls,
-        record_type: str | Any,
-        qname: str
-    ) -> Self:
+    def query(cls, record_type: str | Any, qname: str) -> Self:
         return cls(
             f'Failed to resolve DNS record {record_type} for {qname!r}.',
             context={

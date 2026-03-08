@@ -20,9 +20,6 @@ if TYPE_CHECKING:
     from reconflux.files.readers import BaseFileReader
 
 
-
-
-
 def _to_datetime(timestamp: float | None) -> datetime | None:
     if timestamp is None:
         return None
@@ -32,7 +29,6 @@ def _to_datetime(timestamp: float | None) -> datetime | None:
 def _guess_mime_type(path: Path) -> str | None:
     mime_type, _ = mimetypes.guess_type(str(path))
     return mime_type
-
 
 
 async def _verify_async_path(async_path: anyio.Path) -> None:
@@ -50,9 +46,7 @@ async def _verify_async_path(async_path: anyio.Path) -> None:
 
 
 class FileMetadataAnalyzer:
-    __slots__ = (
-        '_readers',
-    )
+    __slots__ = ('_readers',)
 
     def register_readers(self, *readers: BaseFileReader) -> Self:
         self._readers.update({reader.name: reader for reader in readers})
@@ -96,7 +90,6 @@ class FileMetadataAnalyzer:
             permissions=stat.filemode(file_stat.st_mode),
             is_symlink=await async_path.is_symlink(),
         )
-
 
     async def analyze(
         self,

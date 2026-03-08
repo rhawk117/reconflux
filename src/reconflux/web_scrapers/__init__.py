@@ -1,4 +1,4 @@
-from reconflux.integrations.web_scraping.scrapers.head import (
+from reconflux.web_scrapers.head import (
     CommonMetaTags,
     HeadAnalyzerRuleset,
     MetaTagCategories,
@@ -7,7 +7,7 @@ from reconflux.integrations.web_scraping.scrapers.head import (
     analyze_html_head,
     get_default_ruleset,
 )
-from reconflux.integrations.web_scraping.scrapers.hydration import (
+from reconflux.web_scrapers.hydration import (
     HydrationScrapperResults,
     HyrdationSelectorScrapper,
     ScrappedWindowVariable,
@@ -16,14 +16,14 @@ from reconflux.integrations.web_scraping.scrapers.hydration import (
     get_default_hydration_selectors,
     get_default_window_regexes,
 )
-from reconflux.integrations.web_scraping.scrapers.javascript import (
+from reconflux.web_scrapers.javascript import (
     InlineScriptData,
     JavascriptCodePatterns,
     ScriptJsonContent,
     ScriptTagData,
     ScriptTagScrapper,
 )
-from reconflux.integrations.web_scraping.scrapers.urls import (
+from reconflux.web_scrapers.urls import (
     URLScraper,
     get_default_url_patterns,
 )

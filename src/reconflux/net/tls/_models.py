@@ -28,6 +28,7 @@ class TLSClientOptions(ReconfluxModel):
     def insecure(cls) -> TLSClientOptions:
         return cls(verify=False)
 
+
 @dc.dataclass(slots=True)
 class TLSCertificateResult(DataclassMixin):
     hostname: str

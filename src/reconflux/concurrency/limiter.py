@@ -108,6 +108,7 @@ class LimiterRegistry:
 
 limiter_registry = LimiterRegistry()
 
+
 @contextlib.asynccontextmanager
 async def acquire_limiter(
     limiter: CapacityLimiter | str,

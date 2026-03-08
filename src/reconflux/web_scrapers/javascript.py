@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Literal, Self
 
 import bs4
 
-from reconflux.integrations.web_scraping.scrapers import parser_utils
+from reconflux.web_scrapers import parser_utils
 
 if TYPE_CHECKING:
     from collections.abc import Generator
@@ -146,7 +146,6 @@ class ScriptTagData:
         return not self.content
 
 
-
 @dc.dataclass(slots=True)
 class ScriptTagScrapper:
     regexes: JavascriptCodePatterns = dc.field(
@@ -189,8 +188,4 @@ class ScriptTagScrapper:
         return self._set_script_inline_metadata(script_tag, metadata)
 
     def analyze_script_tags(self, script_tags: list[bs4.Tag]) -> list[ScriptTagData]:
-        return [
-            self.analyze_script_tag(script_tag)
-            for script_tag in script_tags
-        ]
-
+        return [self.analyze_script_tag(script_tag) for script_tag in script_tags]
