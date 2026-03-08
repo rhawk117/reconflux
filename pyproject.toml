@@ -8,11 +8,17 @@ dependencies = [
     "beautifulsoup4>=4.14.3",
     "dnspython>=2.8.0",
     "httpx[http2]>=0.28.1",
+    "openpyxl>=3.1.5",
     "phonenumbers>=9.0.25",
+    "pillow>=12.1.1",
     "pydantic>=2.12.5",
     "pydantic-settings>=2.13.1",
+    "pypdf>=6.7.5",
+    "python-docx>=1.2.0",
+    "python-pptx>=1.0.2",
     "rich>=14.3.3",
     "tenacity>=9.1.4",
+    "tinytag>=2.2.0",
 ]
 
 [dependency-groups]
