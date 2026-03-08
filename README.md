@@ -1,6 +1,6 @@
 # reconflux
 
-A highly performant, modern, asynchronous Python open source intelligence (OSINT) framework.
+A highly performant, modern, asynchronous Python open source intelligence (OSINT) framework. Spiritual successor to reconoscope, a previous tool I made.
 
 Built on Python 3.14+ with `anyio`, `httpx`, `dnspython`, and `pydantic` at its core. Designed for concurrent, structured intelligence gathering across DNS, IP, TLS, file systems, and more.
 
