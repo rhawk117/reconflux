@@ -9,10 +9,13 @@ from reconflux.concurrency.limiter import (
     run_limited,
 )
 from reconflux.concurrency.tasks import (
+    ConcurrencyIntegrationMixin,
     ConcurrentResults,
+    DispatchableTask,
     ExecutionMode,
     TaskFailure,
     collect_concurrently,
+    dispatch_tasks,
     map_concurrently,
     run_concurrently,
 )
@@ -25,7 +28,9 @@ from reconflux.concurrency.timeouts import (
 __all__ = (
     'CapacityLimitPolicy',
     'ConcurrencyError',
+    'ConcurrencyIntegrationMixin',
     'ConcurrentResults',
+    'DispatchableTask',
     'ExecutionMode',
     'LimiterRegistry',
     'LimiterRegistryError',
@@ -35,6 +40,7 @@ __all__ = (
     'acquire_limiter',
     'collect_concurrently',
     'current_effective_deadline',
+    'dispatch_tasks',
     'get_host_limiter',
     'get_provider_limiter',
     'map_concurrently',
