@@ -1,41 +1,17 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 import httpx
 
 from reconflux.net.http._errors import HTTPError
-from reconflux.net.http._options import EventHooks, HTTPClientOptions
-
-if TYPE_CHECKING:
-    from collections.abc import Mapping
+from reconflux.net.http._options import ClientOptions
 
 
 def new_async_httpx_client(
-    settings: HTTPClientOptions | None = None,
-    *,
-    event_hooks: EventHooks | None = None,
-    headers: Mapping[str, str] | None = None,
-    cookies: httpx.Cookies | None = None,
-    proxy: httpx.Proxy | str | httpx.URL | None = None,
-    auth: httpx.Auth | None = None,
-    mounts: Mapping[str, httpx.AsyncBaseTransport | None] | None = None,
-    transport: httpx.AsyncBaseTransport | None = None,
-    params: httpx.QueryParams | Mapping[str, str] | None = None,
+    client_options: ClientOptions | None = None,
 ) -> httpx.AsyncClient:
-    resolved_settings = settings or HTTPClientOptions()
-    kwargs = resolved_settings.to_async_client_kwargs(
-        event_hooks=event_hooks,
-        headers=headers,
-        cookies=cookies,
-        proxy=proxy,
-        auth=auth,
-        mounts=mounts,
-        transport=transport,
-        params=params,
-    )
-
-    return httpx.AsyncClient(**kwargs)
+    client_options = client_options or ClientOptions()
+    client_kwargs = client_options.to_client_kwargs()
+    return httpx.AsyncClient(**client_kwargs)
 
 
 def validate_response(response: httpx.Response) -> None:
@@ -50,21 +26,3 @@ def validate_response(response: httpx.Response) -> None:
             f'HTTP request failed with status {exc.response.status_code}.',
             context=context,
         ) from exc
-
-
-class AsyncHTTPClient(httpx.AsyncClient):
-
-    def __init__(
-        self,
-        settings: HTTPClientOptions | None = None,
-        *,
-        event_hooks: EventHooks | None = None,
-        headers: Mapping[str, str] | None = None,
-        cookies: httpx.Cookies | None = None,
-        proxy: httpx.Proxy | str | httpx.URL | None = None,
-        auth: httpx.Auth | None = None,
-        mounts: Mapping[str, httpx.AsyncBaseTransport | None] | None = None,
-        transport: httpx.AsyncBaseTransport | None = None,
-        params: httpx.QueryParams | Mapping[str, str] | None = None,
-    ) -> None:
-        

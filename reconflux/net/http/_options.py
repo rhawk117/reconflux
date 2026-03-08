@@ -389,7 +389,7 @@ def get_performance_preset(preset: str) -> HttpPerformanceOptions:
 
 
 @dc.dataclass(slots=True)
-class HTTPClientInit(DataclassMixin):
+class ClientOptions(DataclassMixin):
     """
     Immutable-style builder for ``httpx.AsyncClient`` initialization arguments.
 
