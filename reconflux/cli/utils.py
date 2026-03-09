@@ -41,3 +41,13 @@ def error_table(errors: dict[str, str], *, title: str) -> Table:
         table.add_row(task_name, error_text)
 
     return table
+
+def keyvalue_table(title: str) -> Table:
+    table = Table(title=title, box=MINIMAL_DOUBLE_HEAD, show_header=False)
+    table.add_column('Field', no_wrap=True, style='bold')
+    table.add_column('Value', overflow='fold')
+    return table
+
+
+def tablerow(table: Table, label: str, value: object) -> None:
+    table.add_row(label, str(value) if value is not None else '[dim]-[/dim]')

@@ -1,15 +1,14 @@
 from __future__ import annotations
 
 import dataclasses as dc
-from typing import Annotated, Any
+from typing import Annotated
 
 import anyio
 import typer
-from rich.box import MINIMAL_DOUBLE_HEAD
 from rich.console import Console, Group
 from rich.table import Table
 
-from reconflux.cli.utils import cli_exception_guard
+from reconflux.cli import utils as cli_utils
 from reconflux.integrations.ip_info import (
     IPInfoProvider,
     IpLiteRecord,
@@ -68,21 +67,10 @@ LiteOption = Annotated[
 ]
 
 
-def tablerow(table: Table, label: str, value: Any) -> None:
-    table.add_row(label, str(value) if value is not None else '[dim]-[/dim]')
-
-
-def keyvalue_table(title: str) -> Table:
-    table = Table(title=title, box=MINIMAL_DOUBLE_HEAD, show_header=False)
-    table.add_column('Field', no_wrap=True, style='bold')
-    table.add_column('Value', overflow='fold')
-    return table
-
-
 @dc.dataclass(slots=True)
 class IPInfoComponents:
     def ip_lite_result(self, record: IpLiteRecord) -> Table:
-        table = keyvalue_table(f'IP Info (lite) \u2014 {record.ip}')
+        table = cli_utils.keyvalue_table(f'IP Info (lite) \u2014 {record.ip}')
 
         flag_display: str | None = None
         if record.country_flag:
@@ -115,12 +103,12 @@ class IPInfoComponents:
             'Maps Link': record.maps_link,
         }
         for field, value in table_contents.items():
-            tablerow(table, field, value)
+            cli_utils.tablerow(table, field, value)
 
         return table
 
     def legacy_result_group(self, record: IpRecord) -> Group:
-        table = keyvalue_table(f'IP Info \u2014 {record.ip}')
+        table = cli_utils.keyvalue_table(f'IP Info \u2014 {record.ip}')
         table_contents = {
             'IP': record.ip,
             'City': record.city,
@@ -132,9 +120,9 @@ class IPInfoComponents:
             'Maps Link': record.maps_link,
         }
         for key, value in table_contents.items():
-            tablerow(table, key, value)
+            cli_utils.tablerow(table, key, value)
 
-        extras_table = keyvalue_table('Additional Fields')
+        extras_table = cli_utils.keyvalue_table('Additional Fields')
         if record.extras:
             for key, value in record.extras.items():
                 extras_table.add_row(key, str(value))
@@ -178,7 +166,7 @@ def ipinfo_command(
     lite: LiteOption = None,
 ) -> None:
     """Look up geolocation and network metadata for IP_ADDRESS via ipinfo.io."""
-    with cli_exception_guard('ipinfo lookup failed'):
+    with cli_utils.cli_exception_guard('ipinfo lookup failed'):
         exit_code = anyio.run(
             run_ip_info,
             ip_address,

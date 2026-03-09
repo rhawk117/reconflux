@@ -11,6 +11,7 @@ async def setup_logging() -> None:
 def create_cli_app() -> typer.Typer:
     from reconflux.cli.dns import dns_app
     from reconflux.cli.net import net_app
+    from reconflux.cli.tls import tls_app
 
     app = typer.Typer(
         name='reconflux',
@@ -31,6 +32,13 @@ def create_cli_app() -> typer.Typer:
         name='external',
         no_args_is_help=True,
         help='Query third-party data providers (cert.sh, ipinfo.io).',
+    )
+
+    app.add_typer(
+        tls_app,
+        name='tls',
+        no_args_is_help=True,
+        help='Inspect TLS certificates for one or many hosts.',
     )
 
     return app
