@@ -1,13 +1,10 @@
 import dataclasses as dc
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import TYPE_CHECKING, Any
+
+import httpx
 
 from reconflux.core import DataclassMixin
-from reconflux.net.http import (
-    HTTPClientOptions,
-    httpx_retry,
-    new_async_httpx_client,
-    validate_response,
-)
+from reconflux.net import http
 
 if TYPE_CHECKING:
     from collections.abc import Generator
@@ -50,31 +47,39 @@ def walk_certsh_response(response_json: list[dict], domain: str) -> Generator[st
                 yield hostname
 
 
-class CertshProvider:
-    url: ClassVar[str] = 'https://crt.sh/'
-
-    def __init__(self, client_options: HTTPClientOptions | None = None) -> None:
-        self._client = new_async_httpx_client(
-            client_options,
-            headers={
-                'Accept': 'application/json',
-            },
+def certsh_clientmaker(
+    base_url: str = 'https://crt.sh',
+    performance: http.HttpPerformancePreset = 'default',
+) -> httpx.AsyncClient:
+    options = (
+        http
+        .ClientOptions(base_url=base_url)
+        .performance_preset(performance)
+        .use_common_headers(
+            accept='application/json',
         )
+    )
+    return http.new_async_httpx_client(options)
 
-    @httpx_retry()
-    async def _fetch_certsh(self, domain: str) -> list[dict]:
-        response = await self._client.get(
-            self.url,
+
+@dc.dataclass(slots=True)
+class CertshIntegration:
+    client: httpx.AsyncClient = dc.field(default_factory=certsh_clientmaker)
+
+    @http.httpx_retry(attempts=3)
+    async def fetch(self, domain: str) -> list[dict]:
+        response = await self.client.get(
+            '/',
             params={
-                'q': f'%.{domain}',
                 'output': 'json',
+                'q': f'%.{domain}',
             },
         )
-        validate_response(response)
+        http.validate_response(response)
         return response.json()
 
-    async def get_subdomain(self, domain: str) -> SubdomainResult:
-        response_json = await self._fetch_certsh(domain)
+    async def get_subdomains(self, domain: str) -> SubdomainResult:
+        response_json = await self.fetch(domain)
         subdomains = set()
         for hostname in walk_certsh_response(response_json, domain):
             subdomains.add(hostname)

@@ -1,11 +1,11 @@
 import dataclasses as dc
-from typing import Any, ClassVar, Self
+from typing import Any, Self
 
 import httpx
 from pydantic import ConfigDict
 
 from reconflux.core import DataclassMixin, ReconfluxModel
-from reconflux.net.http import new_async_httpx_client, HTTPClientOptions
+from reconflux.net import http
 
 
 class _IpInfoResponse(ReconfluxModel):
@@ -179,18 +179,36 @@ class IpLiteRecord(DataclassMixin):
         )
 
 
-class IPInfoClien:
-    BASE_URL: ClassVar[str] = 'https://ipinfo.io'
+def ip_info_clientmaker(
+    performance: http.HttpPerformancePreset = 'low_latency',
+    token: str | None = None,
+    *,
+    _base_url: str = 'https://ipinfo.io',
+) -> httpx.AsyncClient:
+    options = (
+        http
+        .ClientOptions(base_url=_base_url)
+        .performance_preset(performance)
+        .use_common_headers()
+    )
+    if token:
+        options = options.replace(params={'token': token})
+    return http.new_async_httpx_client(options)
 
-    def __init__(
-        self,
-        client_options: HTTPClientOptions | None = None,
-        headers: dict[str, Any] | None = None,
-        token: str | None = None
-    ) -> None:
-        client_options = client_options or HTTPClientOptions()
-        client_options = client_options.with_overrides
 
+def to_legacy_ip_record(response_json: dict, ip: str) -> IpRecord:
+    if response_json.get('bogon'):
+        raise ValueError(f'{ip} is a bogon address')
+
+    record_fields = {f.name for f in dc.fields(IpRecord)}
+    kwargs: dict = {'ip': ip, 'extras': {}}
+    for key, value in response_json.items():
+        if key in record_fields:
+            kwargs[key] = value
+        else:
+            kwargs['extras'][key] = value
+
+    return IpRecord(**kwargs)
 
 
 ip_info_retry = http.httpx_retry(
@@ -199,27 +217,9 @@ ip_info_retry = http.httpx_retry(
 )
 
 
-
-
 @dc.dataclass(slots=True)
 class IPInfoClient:
-    base_url: str = 'https://ipinfo.io'
-    headers: dict[str, Any] = dc.field(default_factory=dict)
-    client_options: http.HTTPClientOptions = dc.field(
-        default_factory=http.HTTPClientOptions
-    )
-    client: httpx.AsyncClient = dc.field(init=False)
-
-    def __post_init__(self) -> None:
-        self.client_options = self.client_options.with_overrides(base_url=self.base_url)
-        self.headers.update({
-            'Accept': 'application/json'
-        })
-        self.client = http.new_async_httpx_client(
-            self.client_options,
-            headers=self.headers,
-        )
-
+    client: httpx.AsyncClient = dc.field(default_factory=ip_info_clientmaker)
 
     @ip_info_retry
     async def get_legacy_json(self, ip_address: str) -> dict[str, Any]:
@@ -227,105 +227,20 @@ class IPInfoClient:
         http.validate_response(response)
         return response.json()
 
-
     @ip_info_retry
     async def get_lite_json(self, ip_address: str) -> dict[str, Any]:
-        response = await self.client.get(f'{self.base_url}/lite/{ip_address}/json')
+        response = await self.client.get(f'/lite/{ip_address}/json')
         http.validate_response(response)
         return response.json()
 
+    async def legacy_search(self, ip_address: str) -> IpRecord:
+        response_json = await self.get_legacy_json(ip_address)
+        return to_legacy_ip_record(response_json, ip_address)
 
+    async def fetch_lite(self, ip_address: str) -> IpInfoLiteResponse:
+        response = await self.get_lite_json(ip_address)
+        return IpInfoLiteResponse.model_validate(response)
 
-
-class IPInfoLegacyIntegration:
-    """
-    Legacy unauthenticated ipinfo.io integration.
-
-    Queries ``https://ipinfo.io/{ip}/json`` with no token. Returns a minimal
-    ``IpRecord`` with basic geolocation fields.
-    """
-
-    base_url: ClassVar[str] = 'https://ipinfo.io'
-
-    def __init__(
-        self,
-        config: http.HTTPClientOptions | None = None,
-        headers: dict[str, str] | None = None,
-    ) -> None:
-        self._client = http.new_async_httpx_client(
-            config,
-
-        )
-
-    @http.httpx_retry(attempts=3)
-    async def _fetch(self, ip: str) -> dict:
-        response = await self._client.get(f'/{ip}/json')
-        http.validate_response(response)
-        return response.json()
-
-    async def get_ip_record(self, ip: str) -> IpRecord:
-        """
-        Fetch the IP information for the given IP address.
-
-        Returns
-        -------
-        IpRecord
-
-        Raises
-        ------
-        ValueError
-            If the IP address is a bogon address.
-        """
-        data = await self._fetch(ip)
-        if data.get('bogon'):
-            raise ValueError(f'{ip} is a bogon address')
-
-        record_fields = {f.name for f in dc.fields(IpRecord)}
-        kwargs: dict = {'ip': ip, 'extras': {}}
-        for key, value in data.items():
-            if key in record_fields:
-                kwargs[key] = value
-            else:
-                kwargs['extras'][key] = value
-
-        return IpRecord(**kwargs)
-
-
-class IPInfoLiteIntegration:
-    """
-    IPInfo Lite integration using the free unauthenticated endpoint.
-
-    Queries ``https://ipinfo.io/lite/{ip}/json``. No token is required.
-    Returns an ``IpLiteRecord`` with enriched geolocation data including
-    country metadata, continent info, and EU membership status.
-    """
-
-    base_url: ClassVar[str] = 'https://ipinfo.io'
-
-    def __init__(self, client: httpx.AsyncClient) -> None:
-        self._client = client
-
-    @http.httpx_retry(attempts=3)
-    async def _fetch(self, ip: str) -> IpInfoLiteResponse:
-        response = await self._client.get(f'{self.base_url}/lite/{ip}/json')
-        http.validate_response(response)
-        return IpInfoLiteResponse.model_validate(response.json())
-
-    async def get_ip_record(self, ip: str) -> IpLiteRecord:
-        """
-        Fetch the lite IP information for the given IP address.
-
-        Returns
-        -------
-        IpLiteRecord
-
-        Raises
-        ------
-        ValueError
-            If the IP address is a bogon address.
-        """
-        response = await self._fetch(ip)
-        if response.bogon:
-            raise ValueError(f'{ip} is a bogon address')
-
-        return create_response_record(response)
+    async def lite_search(self, ip_address: str) -> IpLiteRecord:
+        response_model = await self.fetch_lite(ip_address)
+        return IpLiteRecord.parse_response(response_model)

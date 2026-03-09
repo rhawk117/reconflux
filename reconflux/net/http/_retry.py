@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, ParamSpec, TypeVar
 import httpx
 import tenacity
 
-
 if TYPE_CHECKING:
     from collections.abc import Callable
 
@@ -14,6 +13,10 @@ logger = logging.getLogger(__name__)
 
 Parameters = ParamSpec('Parameters')
 ReturnValue = TypeVar('ReturnValue')
+
+
+def should_retry_response_status(code: int) -> bool:
+    return code == 429 or 500 <= code <= 599
 
 
 def is_retryable_httpx_exception(exception: BaseException) -> bool:
@@ -34,8 +37,7 @@ def is_retryable_httpx_exception(exception: BaseException) -> bool:
         return True
 
     if isinstance(exception, httpx.HTTPStatusError):
-        status_code = exception.response.status_code
-        return status_code == 429 or 500 <= status_code <= 599
+        return should_retry_response_status(exception.response.status_code)
 
     return False
 
@@ -58,7 +60,3 @@ def httpx_retry(
         reraise=reraise,
         before_sleep=tenacity.before_sleep_log(logger, log_level=logging.WARNING),
     )
-
-
-def should_retry_response_status(response: httpx.Response) -> bool:
-    return response.status_code == 429 or 500 <= response.status_code <= 599

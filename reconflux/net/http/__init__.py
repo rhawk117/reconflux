@@ -1,21 +1,24 @@
+from reconflux.net.http._core import new_async_httpx_client, validate_response
+from reconflux.net.http._errors import HTTPError
+from reconflux.net.http._options import (
+    ClientOptions,
+    HttpPerformanceOptions,
+    HttpPerformancePreset,
+)
 from reconflux.net.http._retry import (
-    is_retryable_httpx_exception,
     httpx_retry,
+    is_retryable_httpx_exception,
     should_retry_response_status,
 )
-from reconflux.net.http._options import HTTPClientOptions, HTTPEventHook, HTTPEventName
-from reconflux.net.http._errors import HTTPError
-from reconflux.net.http._core import new_async_httpx_client, validate_response
-
 
 __all__ = (
-    'is_retryable_httpx_exception',
-    'httpx_retry',
-    'should_retry_response_status',
-    'HTTPClientOptions',
-    'HTTPEventHook',
-    'HTTPEventName',
+    'ClientOptions',
     'HTTPError',
+    'HttpPerformanceOptions',
+    'HttpPerformancePreset',
+    'httpx_retry',
+    'is_retryable_httpx_exception',
     'new_async_httpx_client',
+    'should_retry_response_status',
     'validate_response',
 )

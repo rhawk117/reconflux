@@ -1,63 +1,37 @@
-import dataclasses as dc
-import logging
-import tomllib
-from pathlib import Path
+import anyio
+import typer
 
-from reconflux.logging import LoggingConfig, initialize_logging
-
-logger = logging.getLogger(__name__)
+from reconflux.app.logging import LoggingExtension
 
 
-@dc.dataclass(slots=True)
-class SettingsFolder:
-    folder_name: str = 'settings'
-    folder_path: Path = dc.field(init=False)
+async def setup_logging() -> None:
+    logging_extension = await LoggingExtension.resolve()
+    logging_extension.configure_loggers()
 
-    def __post_init__(self) -> None:
-        self.folder_path = Path(self.folder_name).resolve()
-        self.folder_path.mkdir(exist_ok=True)
+def create_cli_app() -> typer.Typer:
+    from reconflux.cli.dns import dns_app
 
+    app = typer.Typer(
+        name='reconflux',
+        no_args_is_help=True,
+        rich_markup_mode='rich',
+        help='Reconflux terminal interface.',
+    )
 
-    def get_file_path(self, filename: str) -> Path:
-        return self.folder_path.joinpath(filename).resolve()
+    app.add_typer(
+        dns_app,
+        name='dns',
+        no_args_is_help=True,
+        help='Run DNS reconnaissance workflows.',
+    )
 
-
-    def get_logger_config(self, filename: str = 'logger.toml') -> LoggingConfig:
-        logger_path = self.get_file_path(filename)
-        if not logger_path.exists():
-            default_config = LoggingConfig()
-            # create the toml file
-            return default_config
-
-        toml_contents = tomllib.loads(logger_path.read_text('utf-8'))
-        logger_config = LoggingConfig.model_validate(toml_contents)
-        return logger_config
+    return app
 
 
-
-def setup_logger(settings_folder: SettingsFolder) -> None:
-    logger_config = settings_folder.get_logger_config()
-    initialize_logging(logger_config)
-    logger.info('Logger initialized')
-
-
-
-class IPInfoDemo:
-
-    def __init__(self) -> None:
-
-
-
-
-
-
-
-def main() -> None:
-    settings_folder = SettingsFolder()
-    setup_logger(settings_folder)
-
-
-
+async def main() -> None:
+    await setup_logging()
+    app = create_cli_app()
+    app()
 
 if __name__ == '__main__':
-    main()
+    anyio.run(main)

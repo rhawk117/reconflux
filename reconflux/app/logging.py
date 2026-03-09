@@ -27,7 +27,6 @@ class LoggerJsonConfig(ReconfluxModel):
 
 
 
-
 async def get_log_config_file(filename: str = 'logger.json') -> AppDataFile:
     return await AppDataFile.resolve(
         filename,
@@ -40,7 +39,7 @@ class LoggingExtension:
     config: LoggerJsonConfig
 
     @classmethod
-    async def load(cls) -> Self:
+    async def resolve(cls) -> Self:
         """
         Resolves the LoggerJsonConfig from the file system (if exists)
 
