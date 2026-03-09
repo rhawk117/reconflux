@@ -48,6 +48,7 @@ class WebScrapeResult(DataclassMixin):
         Structured data URLs matched by the URL scraper patterns
         (e.g. Next.js page-data JSON paths).
     """
+
     url: str
     status_code: int
     head: WebsiteHeadData
@@ -94,12 +95,7 @@ def web_scraper_clientmaker(
     performance: http.HttpPerformancePreset = 'default',
 ) -> httpx.AsyncClient:
     """Create an ``httpx.AsyncClient`` with browser-like headers for web scraping."""
-    options = (
-        http
-        .ClientOptions()
-        .performance_preset(performance)
-        .use_common_headers()
-    )
+    options = http.ClientOptions().performance_preset(performance).use_common_headers()
     return http.new_async_httpx_client(options)
 
 
@@ -162,8 +158,9 @@ class WebScraperIntegration(http.HTTPIntegration):
         self,
         performance: http.HttpPerformancePreset = 'default',
     ) -> None:
-        client = web_scraper_clientmaker(performance)
-        super().__init__(client)
+        options = http.ClientOptions().use_common_headers()
+
+        super().__init__(performance, options)
         self.script_scraper = ScriptTagScrapper()
         self.url_scraper = URLScraper()
         self.hydration_scraper = HydrationScraper()
@@ -173,7 +170,6 @@ class WebScraperIntegration(http.HTTPIntegration):
         response = await self.client.get(url)
         http.validate_response(response)
         return response
-
 
     async def scrape(self, url: str) -> WebScrapeResult:
         """Fetch and scrape a single URL.

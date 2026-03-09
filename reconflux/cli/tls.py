@@ -18,6 +18,40 @@ from reconflux.net.tls import TLSCertificateResult, TLSClientOptions
 tls_app = typer.Typer()
 
 
+"""test commands
+
+Single host check:
+# Basic check
+uv run reconflux tls check github.com
+
+# Non-standard port
+uv run reconflux tls check smtp.gmail.com --port 465
+
+# Skip certificate verification (useful for self-signed certs)
+uv run reconflux tls check expired.badssl.com --no-verify
+
+# Tight timeout
+uv run reconflux tls check cloudflare.com --timeout 3.0
+
+Batch check:
+# Multiple hosts at once
+uv run reconflux tls batch --host github.com --host google.com --host cloudflare.com
+
+# With concurrency cap
+uv run reconflux tls batch --host github.com --host google.com --host example.com \
+    --concurrency 2
+
+# Stop on first failure
+uv run reconflux tls batch --host github.com --host doesnotexist.invalid --fail-fast
+
+# Collect all errors (default) — shows which hosts failed in the table
+uv run reconflux tls batch --host github.com --host doesnotexist.invalid
+
+# Non-standard port for all hosts in the batch
+uv run reconflux tls batch --host smtp.gmail.com --host smtp.office365.com --port 465
+
+"""
+
 HostArgument = Annotated[
     str,
     typer.Argument(

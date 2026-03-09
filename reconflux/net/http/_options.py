@@ -18,7 +18,10 @@ DEFAULT_ACCEPT_HEADER = (
 DEFAULT_ACCEPT_ENCODING_HEADER = 'gzip, deflate, br'
 DEFAULT_ACCEPT_LANGUAGE_HEADER = 'en-US,en;q=0.9'
 DEFAULT_CACHE_CONTROL_HEADER = 'no-cache'
-DEFAULT_USER_AGENT = 'reconflux/0.1'
+DEFAULT_USER_AGENT = (
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+    '(KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36'
+)
 
 
 def common_http_headers(

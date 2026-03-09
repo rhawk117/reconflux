@@ -12,6 +12,7 @@ def create_cli_app() -> typer.Typer:
     from reconflux.cli.dns import dns_app
     from reconflux.cli.net import net_app
     from reconflux.cli.tls import tls_app
+    from reconflux.cli.web import web_app
 
     app = typer.Typer(
         name='reconflux',
@@ -39,6 +40,13 @@ def create_cli_app() -> typer.Typer:
         name='tls',
         no_args_is_help=True,
         help='Inspect TLS certificates for one or many hosts.',
+    )
+
+    app.add_typer(
+        web_app,
+        name='web',
+        no_args_is_help=True,
+        help='Scrape and analyse web pages (head, scripts, hydration, anchors).',
     )
 
     return app
