@@ -8,11 +8,11 @@ from reconflux.web_scrapers.head import (
     get_default_ruleset,
 )
 from reconflux.web_scrapers.hydration import (
+    HydrationScraper,
     HydrationScrapperResults,
     HyrdationSelectorScrapper,
     ScrappedWindowVariable,
     WindowVariableScrapper,
-    analyze_site_hydration,
     get_default_hydration_selectors,
     get_default_window_regexes,
 )
@@ -31,6 +31,7 @@ from reconflux.web_scrapers.urls import (
 __all__ = (
     'CommonMetaTags',
     'HeadAnalyzerRuleset',
+    'HydrationScraper',
     'HydrationScrapperResults',
     'HyrdationSelectorScrapper',
     'InlineScriptData',
@@ -45,7 +46,6 @@ __all__ = (
     'WebsiteHeadData',
     'WindowVariableScrapper',
     'analyze_html_head',
-    'analyze_site_hydration',
     'get_default_hydration_selectors',
     'get_default_ruleset',
     'get_default_url_patterns',

@@ -124,21 +124,30 @@ class HydrationScrapperResults:
     window_variables: list[ScrappedWindowVariable]
     selector_matches: dict[str, list[dict] | dict]
 
-
-def analyze_site_hydration(
-    soup: bs4.BeautifulSoup,
-    response_text: str,
-    *,
-    window_variable: WindowVariableScrapper | None = None,
-    selector: HyrdationSelectorScrapper | None = None,
-) -> HydrationScrapperResults:
-    window_scraper = window_variable or WindowVariableScrapper()
-    selector = selector or HyrdationSelectorScrapper()
-
-    selector_matches = dict(selector.iter_selector_hits(soup))
-    window_variables = list(window_scraper.scaniter_window_vars(response_text))
-
-    return HydrationScrapperResults(
-        window_variables=window_variables,
-        selector_matches=selector_matches,
+@dc.dataclass(slots=True)
+class HydrationScraper:
+    """
+    for scenarios where multiple
+    sites are being analyzed at once, it would be
+    really inefficient if the regexes were compiled
+    each time
+    """
+    window_scraper: WindowVariableScrapper = dc.field(
+        default_factory=WindowVariableScrapper
     )
+    selector: HyrdationSelectorScrapper = dc.field(
+        default_factory=HyrdationSelectorScrapper
+    )
+
+    def scrape_hydration(
+        self,
+        soup: bs4.BeautifulSoup,
+        response_text: str,
+    ) -> HydrationScrapperResults:
+        selector_matches = dict(self.selector.iter_selector_hits(soup))
+        window_variables = list(self.window_scraper.scaniter_window_vars(response_text))
+
+        return HydrationScrapperResults(
+            window_variables=window_variables,
+            selector_matches=selector_matches,
+        )

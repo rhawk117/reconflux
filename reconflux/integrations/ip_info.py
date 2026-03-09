@@ -37,10 +37,10 @@ class IpInfoContinentResponse(_IpInfoResponse):
 
 class IpInfoLiteResponse(_IpInfoResponse):
     """
-    Response model for the ipinfo.io lite endpoint (``/lite/{ip}/json``).
+    Response model for the ipinfo.io lite endpoint (``/lite/{ip}``).
 
-    This is the free unauthenticated endpoint that returns enriched geolocation
-    data including country metadata, continent, and currency info.
+    Requires a free API token. Uses the ``api.ipinfo.io`` base host.
+    Returns country-level geolocation and basic ASN data.
     """
     ip: str
     bogon: bool = False
@@ -183,7 +183,7 @@ def ip_info_clientmaker(
     performance: http.HttpPerformancePreset = 'low_latency',
     token: str | None = None,
     *,
-    _base_url: str = 'https://ipinfo.io',
+    _base_url: str = 'https://api.ipinfo.io',
 ) -> httpx.AsyncClient:
     options = (
         http
@@ -229,7 +229,7 @@ class IPInfoClient:
 
     @ip_info_retry
     async def get_lite_json(self, ip_address: str) -> dict[str, Any]:
-        response = await self.client.get(f'/lite/{ip_address}/json')
+        response = await self.client.get(f'/lite/{ip_address}')
         http.validate_response(response)
         return response.json()
 

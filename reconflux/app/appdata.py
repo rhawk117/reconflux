@@ -93,6 +93,12 @@ class AppDataFile:
         ----------
         contents : str
             The content to write
+
+        Returns
+        ---------
+        bool
+            True if the file did not exist and the contents
+            were written to False if it already existed
         """
         if await self.path.exists():
             return False

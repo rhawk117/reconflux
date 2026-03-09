@@ -28,7 +28,7 @@ def create_cli_app() -> typer.Typer:
 
     app.add_typer(
         net_app,
-        name='providers',
+        name='external',
         no_args_is_help=True,
         help='Query third-party data providers (cert.sh, ipinfo.io).',
     )
