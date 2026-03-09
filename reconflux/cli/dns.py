@@ -1,4 +1,5 @@
 import dataclasses as dc
+import logging
 from typing import Annotated, Any
 
 import anyio
@@ -22,6 +23,9 @@ from reconflux.integrations.dns import (
     ReverseDNSResult,
     build_command_options,
 )
+from reconflux.net.dns import DNSRecordType
+
+logger = logging.getLogger(__name__)
 
 dns_app = typer.Typer()
 
@@ -468,6 +472,7 @@ def dns_domain_command(
     except Exception as exc:
         raise typer.BadParameter(str(exc)) from exc
 
+    logger.info(f'Resolving domain name records {", ".join(DNSRecordType)} for {domain}')
     with cli_utils.cli_exception_guard('DNS domain lookup failed'):
         exit_code = anyio.run(run_dns_lookup, command_options)
 
@@ -516,6 +521,7 @@ def dns_ip_command(
     except Exception as exc:
         raise typer.BadParameter(str(exc)) from exc
 
+    logger.info(f'Performing reverse name look for {ip_address}')
     with cli_utils.cli_exception_guard('DNS IP lookup failed'):
         exit_code = anyio.run(run_dns_lookup, command_options)
 
@@ -564,6 +570,9 @@ def dns_email_command(
     except Exception as exc:
         raise typer.BadParameter(str(exc)) from exc
 
+    logger.info(
+        f'Searching mail exchange relevant records for email ({email}) domain name'
+    )
     with cli_utils.cli_exception_guard('DNS email lookup failed'):
         exit_code = anyio.run(run_dns_lookup, command_options)
 
@@ -615,6 +624,7 @@ def dns_lookup_command(
     except Exception as exc:
         raise typer.BadParameter(str(exc)) from exc
 
+    logger.info('Dispatching Mixed DNS Lookup command to DNSProvider')
     with cli_utils.cli_exception_guard('DNS command failed'):
         exit_code = anyio.run(run_dns_lookup, command_options)
 

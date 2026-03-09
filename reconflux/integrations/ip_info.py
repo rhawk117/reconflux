@@ -4,7 +4,7 @@ from typing import Any, Self
 import httpx
 from pydantic import ConfigDict
 
-from reconflux.core import DataclassMixin, ReconfluxModel
+from reconflux.core import DataclassMixin, ReconfluxModel, emit_internal_warning
 from reconflux.net import http
 
 
@@ -215,9 +215,19 @@ ip_info_retry = http.httpx_retry(
 )
 
 
-@dc.dataclass(slots=True)
-class IPInfoClient:
-    client: httpx.AsyncClient = dc.field(default_factory=ip_info_clientmaker)
+class IPInfoProvider(http.HTTPIntegration):
+    def __init__(
+        self,
+        token: str | None = None,
+        performance: http.HttpPerformancePreset = 'low_latency',
+        options: http.ClientOptions | None = None,
+    ) -> None:
+        options = options or http.ClientOptions()
+        if token:
+            options = options.update_mappings(params={'token': token})
+
+        self._have_token = bool(token)
+        super().__init__(performance, options)
 
     @ip_info_retry
     async def get_legacy_json(self, ip_address: str) -> dict[str, Any]:
@@ -236,6 +246,11 @@ class IPInfoClient:
         return to_legacy_ip_record(response_json, ip_address)
 
     async def fetch_lite(self, ip_address: str) -> IpInfoLiteResponse:
+        if not self._have_token:
+            emit_internal_warning(
+                'No token was provided for IPInfo which will '
+                'always cause fetch_lite to fail.'
+            )
         response = await self.get_lite_json(ip_address)
         return IpInfoLiteResponse.model_validate(response)
 

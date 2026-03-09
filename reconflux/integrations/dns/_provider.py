@@ -11,7 +11,7 @@ from reconflux.integrations.dns._models import (
     DNSBlocklist,
     DNSBlocklistCollectionResult,
     DNSBlocklistResult,
-    DNSIntegrationDispatchResult,
+    DNSIntegrationResult,
     DNSLookupKind,
     DNSLookupRequest,
     DomainDNSResult,
@@ -150,7 +150,7 @@ class DNSProvider:
         tcp: bool = False,
         include_blocklists: bool = True,
         record_types: Sequence[DNSRecordType | str] | None = None,
-    ) -> DNSIntegrationDispatchResult:
+    ) -> DNSIntegrationResult:
         """Dispatch a top-level DNS lookup request.
 
         Parameters
@@ -168,7 +168,7 @@ class DNSProvider:
 
         Returns
         -------
-        DNSIntegrationDispatchResult
+        DNSIntegrationResult
             Typed result object corresponding to the request kind.
         """
         if request.kind is DNSLookupKind.DOMAIN and request.domain:

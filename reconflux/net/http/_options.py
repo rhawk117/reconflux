@@ -1,5 +1,5 @@
 import dataclasses as dc
-from ssl import SSLContext  # noqa: TC003
+from ssl import SSLContext
 from typing import TYPE_CHECKING, Annotated, Any, Literal, Self, TypedDict
 
 import httpx
@@ -339,7 +339,7 @@ class HttpPerformanceOptions(ReconfluxModel):
         }
 
 
-type HttpPerformancePreset = Literal[
+HttpPerformancePreset = Literal[
     'default',
     'high_throughput',
     'low_latency',
@@ -544,3 +544,22 @@ class ClientOptions(DataclassMixin):
             'params': self.params,
             'default_encoding': self.default_encoding,
         }
+
+    def update_mappings(
+        self,
+        *,
+        headers: dict[str, Any] | None = None,
+        params: dict[str, Any] | None = None,
+    ) -> Self:
+        newheaders = dict(self.headers or {})
+        newparams = dict(self.params or {})
+
+        if headers:
+            newheaders.update(headers)
+        if params:
+            newparams.update(newparams)
+
+        return self.replace(
+            headers=newheaders,
+            params=newparams,
+        )

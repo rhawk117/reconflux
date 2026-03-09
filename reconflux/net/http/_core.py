@@ -1,15 +1,16 @@
 from __future__ import annotations
 
-import dataclasses as dc
-from typing import Self
+from typing import TYPE_CHECKING, Any, Self
 
 import httpx
 
 from reconflux.net.http._errors import HTTPError
 from reconflux.net.http._options import ClientOptions
 
+if TYPE_CHECKING:
+    from reconflux.net.http import HttpPerformancePreset
 
-@dc.dataclass(slots=True)
+
 class HTTPIntegration:
     """Base class for HTTP-backed integrations.
 
@@ -18,7 +19,14 @@ class HTTPIntegration:
     ``async with`` or by managing the lifecycle manually.
     """
 
-    client: httpx.AsyncClient
+    def __init__(
+        self,
+        performance: HttpPerformancePreset = 'default',
+        options: ClientOptions | None = None,
+    ) -> None:
+        options = options or ClientOptions()
+        options = options.performance_preset(performance)
+        self.client = new_async_httpx_client(options)
 
     async def aclose(self) -> None:
         await self.client.aclose()
@@ -27,7 +35,7 @@ class HTTPIntegration:
         await self.client.__aenter__()
         return self
 
-    async def __aexit__(self, *args: object) -> None:
+    async def __aexit__(self, *args: Any) -> None:
         await self.client.__aexit__(*args)
 
 
