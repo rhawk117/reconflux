@@ -11,9 +11,6 @@ from pydantic import ValidationError
 from reconflux.app.appdata import AppDataFile
 from reconflux.core import FileSystemError, ReconfluxModel, emit_internal_warning
 
-_FMT = '%(asctime)s | %(levelname)-8s | %(name)s | %(message)s'
-_DATEFMT = '%Y-%m-%d %H:%M:%S'
-
 
 def log_levelname_to_level(levelname: str) -> int:
     return logging.getLevelNamesMapping()[levelname.strip().upper()]
@@ -21,6 +18,7 @@ def log_levelname_to_level(levelname: str) -> int:
 
 class LoggerJsonConfig(ReconfluxModel):
     message_format: str = '%(asctime)s | %(levelname)-8s | %(name)s | %(message)s'
+    date_format: str = '%Y-%m-%d %H:%M:%S'
     level: str | int = 'INFO'
     colorized: bool = True
     file_logging: bool = False
@@ -100,12 +98,15 @@ class LoggingExtension:
         root.handlers.clear()
         root.setLevel(self.config.level)
 
-        formatter = logging.Formatter(fmt=_FMT, datefmt=_DATEFMT)
+        formatter = logging.Formatter(
+            fmt=self.config.message_format,
+            datefmt=self.config.date_format,
+        )
 
         if self.config.colorized:
             from rich.logging import RichHandler
 
-            console_handler: logging.Handler = RichHandler(
+            console_handler = RichHandler(
                 rich_tracebacks=True,
                 show_path=False,
                 markup=False,
