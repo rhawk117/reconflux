@@ -182,12 +182,10 @@ class IpLiteRecord(DataclassMixin):
 def ip_info_clientmaker(
     performance: http.HttpPerformancePreset = 'low_latency',
     token: str | None = None,
-    *,
-    _base_url: str = 'https://api.ipinfo.io',
 ) -> httpx.AsyncClient:
     options = (
         http
-        .ClientOptions(base_url=_base_url)
+        .ClientOptions()
         .performance_preset(performance)
         .use_common_headers()
     )
@@ -223,13 +221,13 @@ class IPInfoClient:
 
     @ip_info_retry
     async def get_legacy_json(self, ip_address: str) -> dict[str, Any]:
-        response = await self.client.get(f'/{ip_address}/json')
+        response = await self.client.get(f'https://ipinfo.io/{ip_address}/json')
         http.validate_response(response)
         return response.json()
 
     @ip_info_retry
     async def get_lite_json(self, ip_address: str) -> dict[str, Any]:
-        response = await self.client.get(f'/lite/{ip_address}')
+        response = await self.client.get(f'https://api.ipinfo.io/lite/{ip_address}')
         http.validate_response(response)
         return response.json()
 

@@ -52,10 +52,13 @@ TokenOption = Annotated[
 ]
 
 LiteOption = Annotated[
-    bool,
+    bool | None,
     typer.Option(
         '--lite/--full',
-        help='Use the free lite endpoint or the authenticated full endpoint.',
+        help=(
+            'Use the lite endpoint (requires token) or the unauthenticated legacy '
+            'endpoint. Defaults to legacy when no token is provided.'
+        ),
         rich_help_panel='Behavior',
     ),
 ]
@@ -191,11 +194,13 @@ class IntegrationRunner:
         self,
         ip_address: str,
         token: str | None,
-        lite: bool,  # noqa: FBT001
+        lite: bool | None,  # noqa: FBT001
     ) -> int:
         client = IPInfoClient(client=ip_info_clientmaker(token=token))
 
-        if lite:
+        use_lite = lite if lite is not None else token is not None
+
+        if use_lite:
             record = await client.lite_search(ip_address)
             self.renderer.ip_lite(record)
         else:
@@ -222,7 +227,7 @@ def ipinfo_command(
     *,
     ip_address: IPArgument,
     token: TokenOption | None = None,
-    lite: LiteOption = True,
+    lite: LiteOption = None,
 ) -> None:
     """Look up geolocation and network metadata for IP_ADDRESS via ipinfo.io."""
     runner = IntegrationRunner()
