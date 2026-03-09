@@ -13,6 +13,7 @@ def create_cli_app() -> typer.Typer:
     from reconflux.cli.net import net_app
     from reconflux.cli.tls import tls_app
     from reconflux.cli.web import web_app
+    from reconflux.cli.whois import whois_app
 
     app = typer.Typer(
         name='reconflux',
@@ -47,6 +48,13 @@ def create_cli_app() -> typer.Typer:
         name='web',
         no_args_is_help=True,
         help='Scrape and analyse web pages (head, scripts, hydration, anchors).',
+    )
+
+    app.add_typer(
+        whois_app,
+        name='whois',
+        no_args_is_help=True,
+        help='RDAP/WHOIS lookups for domains, IP networks, and ASNs.',
     )
 
     return app
