@@ -10,7 +10,6 @@ if TYPE_CHECKING:
     from collections.abc import Generator
 
 
-
 async def filepath(
     path: os.PathLike,
     *,
@@ -37,10 +36,10 @@ async def get_cwd(
     resolve: bool = False,
 ) -> anyio.Path:
     cwd = await anyio.Path.cwd()
-    if resolve:
-        cwd = await cwd.resolve()
     if join:
         cwd = cwd.joinpath(*join)
+    if resolve:
+        cwd = await cwd.resolve()
     return cwd
 
 
@@ -51,7 +50,10 @@ async def read_text_async(path: os.PathLike, *, encoding: str = 'utf-8') -> str:
 
 
 async def write_text_async(
-    path: os.PathLike, *, text: str, encoding: str = 'utf-8'
+    path: os.PathLike,
+    *,
+    text: str,
+    encoding: str = 'utf-8',
 ) -> None:
     path = anyio.Path(path)
     with wrap_os_error('write text', path):

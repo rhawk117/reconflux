@@ -1,11 +1,9 @@
-from typing import TYPE_CHECKING, Self
+from collections.abc import Sequence
+from typing import Self
 
 from pydantic import PositiveFloat, PositiveInt
 
 from reconflux.core import ReconfluxModel
-
-if TYPE_CHECKING:
-    from collections.abc import Sequence
 
 
 class DNSClientOptions(ReconfluxModel):

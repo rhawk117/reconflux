@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import Annotated, Any
 
 import anyio
@@ -11,6 +9,7 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 
+from reconflux.cli.utils import cli_exception_guard
 from reconflux.integrations.dns import (
     DNSBlocklistCollectionResult,
     DNSBlocklistResult,
@@ -25,20 +24,8 @@ from reconflux.net.dns import DNSClientOptions
 
 console = Console()
 
-app = typer.Typer(
-    name='reconflux',
-    no_args_is_help=True,
-    rich_markup_mode='rich',
-    help='Reconflux terminal interface.',
-)
 
-dns_app = typer.Typer(
-    name='dns',
-    no_args_is_help=True,
-    help='Run DNS reconnaissance workflows.',
-)
-
-app.add_typer(dns_app, name='dns')
+dns_app = typer.Typer()
 
 
 DomainOption = Annotated[
@@ -47,6 +34,7 @@ DomainOption = Annotated[
         '--domain',
         help='Domain to inspect.',
         rich_help_panel='Target',
+        show_default=True,
     ),
 ]
 
@@ -56,6 +44,7 @@ IPAddressOption = Annotated[
         '--ip',
         help='IP address to reverse-resolve.',
         rich_help_panel='Target',
+        show_default=True,
     ),
 ]
 
@@ -65,6 +54,7 @@ EmailOption = Annotated[
         '--email',
         help='Email address to inspect via MX, TXT, and DMARC lookups.',
         rich_help_panel='Target',
+        show_default=True,
     ),
 ]
 
@@ -75,6 +65,7 @@ NameserversOption = Annotated[
         '-n',
         help='Custom resolver nameserver. Repeat to provide multiple values.',
         rich_help_panel='Resolver',
+        show_default=True,
     ),
 ]
 
@@ -84,6 +75,7 @@ SearchDomainsOption = Annotated[
         '--search-domain',
         help='Custom search domain. Repeat to provide multiple values.',
         rich_help_panel='Resolver',
+        show_default=True,
     ),
 ]
 
@@ -94,6 +86,7 @@ TimeoutOption = Annotated[
         min=0.0,
         help='Per-query timeout in seconds.',
         rich_help_panel='Resolver',
+        show_default=True,
     ),
 ]
 
@@ -104,6 +97,7 @@ LifetimeOption = Annotated[
         min=0.0,
         help='Resolver lifetime in seconds.',
         rich_help_panel='Resolver',
+        show_default=True,
     ),
 ]
 
@@ -115,6 +109,7 @@ PortOption = Annotated[
         max=65535,
         help='Resolver port override.',
         rich_help_panel='Resolver',
+        show_default=True,
     ),
 ]
 
@@ -124,6 +119,7 @@ SearchOption = Annotated[
         '--search/--no-search',
         help='Override resolver search-domain behavior.',
         rich_help_panel='Behavior',
+        show_default=True,
     ),
 ]
 
@@ -545,6 +541,7 @@ async def run_dns_lookup(command_options: DNSCommandOptions) -> int:
 
 @dns_app.command('lookup')
 def dns_lookup_command(
+    *,
     domain: DomainOption | None = None,
     ip_address: IPAddressOption | None = None,
     email: EmailOption | None = None,
@@ -587,19 +584,8 @@ def dns_lookup_command(
     except Exception as exc:
         raise typer.BadParameter(str(exc)) from exc
 
-    try:
+    with cli_exception_guard('DNS command failed'):
         exit_code = anyio.run(run_dns_lookup, command_options)
-    except KeyboardInterrupt as exc:
-        raise typer.Exit(code=130) from exc
-    except Exception as exc:
-        console.print(
-            Panel(
-                Text.from_markup(f'[bold red]DNS command failed:[/] {exc!r}'),
-                title='Unhandled Error',
-                border_style='red',
-            )
-        )
-        raise typer.Exit(code=1) from exc
 
     raise typer.Exit(code=exit_code)
 

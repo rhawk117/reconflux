@@ -1,4 +1,4 @@
-from reconflux.net.http._core import new_async_httpx_client, validate_response
+from reconflux.net.http._core import HTTPIntegration, new_async_httpx_client, validate_response
 from reconflux.net.http._errors import HTTPError
 from reconflux.net.http._options import (
     ClientOptions,
@@ -14,6 +14,7 @@ from reconflux.net.http._retry import (
 __all__ = (
     'ClientOptions',
     'HTTPError',
+    'HTTPIntegration',
     'HttpPerformanceOptions',
     'HttpPerformancePreset',
     'httpx_retry',

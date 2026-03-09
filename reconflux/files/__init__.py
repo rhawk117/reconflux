@@ -1,6 +1,6 @@
-from reconflux.files.analyzer import FileMetadataAnalyzer
-from reconflux.files.errors import FileAnalysisError
-from reconflux.files.models import (
+from reconflux.files._core import FileMetadataReader
+from reconflux.files._errors import FileAnalysisError
+from reconflux.files._models import (
     BaseFileMetadata,
     GenericFileMetadata,
     MetadataResult,
@@ -8,7 +8,7 @@ from reconflux.files.models import (
     RichMetadataMixin,
     SpreadsheetMetadata,
 )
-from reconflux.files.readers import (
+from reconflux.files._readers import (
     BaseFileReader,
     ImageReader,
     PDFReader,
@@ -19,7 +19,7 @@ __all__ = (
     'BaseFileMetadata',
     'BaseFileReader',
     'FileAnalysisError',
-    'FileMetadataAnalyzer',
+    'FileMetadataReader',
     'GenericFileMetadata',
     'ImageReader',
     'MetadataResult',

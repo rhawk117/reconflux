@@ -20,7 +20,7 @@ async def resolve_appdata_site(prefix: str = '.') -> anyio.Path:
     dirname = f'{prefix}{PACKAGE_NAME}-appdata'
     appdata_path = await filesystem.get_cwd(dirname, resolve=True)
     await appdata_path.mkdir(exist_ok=True)
-    if not appdata_path.is_dir() and os.access(appdata_path, os.W_OK):
+    if not await appdata_path.is_dir() and os.access(appdata_path, os.W_OK):
         raise AppdataResolutionError(
             f'The resolved appdata site for the application `{appdata_path}`'
             'is not writable. This directory is required for the application '
@@ -32,7 +32,7 @@ async def resolve_appdata_site(prefix: str = '.') -> anyio.Path:
 async def resolve_appdata_file(*parts: str, must_exist: bool = False) -> anyio.Path:
     appdata_path = await resolve_appdata_site()
     path = appdata_path.joinpath(*parts)
-    if not path.is_file() and must_exist:
+    if not await path.is_file() and must_exist:
         raise FileSystemError(
             f'The appdata path that must exist at `{path}` was not'
             'found.'

@@ -2,16 +2,15 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import anyio
 import openpyxl
 from PIL import ExifTags, Image
 from pypdf import PdfReader
 
-from reconflux.files.models import ImageMetadata, PDFMetadata, SpreadsheetMetadata
+from reconflux.files._models import ImageMetadata, PDFMetadata, SpreadsheetMetadata
 
 if TYPE_CHECKING:
-    from pathlib import Path
-
-    from reconflux.files.models import BaseFileMetadata, MetadataResult
+    from reconflux.files._models import BaseFileMetadata, MetadataResult
 
 
 class BaseFileReader:
@@ -19,14 +18,14 @@ class BaseFileReader:
 
     def can_read(
         self,
-        path: Path,
+        path: anyio.Path,
         mime_type: str | None,
     ) -> bool:
         raise NotImplementedError
 
     def read(
         self,
-        path: Path,
+        path: anyio.Path,
         mime_type: str | None,
         base_metadata: BaseFileMetadata,
     ) -> MetadataResult:
@@ -48,7 +47,7 @@ class ImageReader(BaseFileReader):
 
     def can_read(
         self,
-        path: Path,
+        path: anyio.Path,
         mime_type: str | None,
     ) -> bool:
         if path.suffix.lower() in self._supported_suffixes:
@@ -58,7 +57,7 @@ class ImageReader(BaseFileReader):
 
     def read(
         self,
-        path: Path,
+        path: anyio.Path,
         mime_type: str | None,
         base_metadata: BaseFileMetadata,
     ) -> ImageMetadata:
@@ -95,14 +94,14 @@ class SpreadsheetReader(BaseFileReader):
 
     def can_read(
         self,
-        path: Path,
+        path: anyio.Path,
         mime_type: str | None,
     ) -> bool:
         return path.suffix.lower() in self._supported_suffixes
 
     def read(
         self,
-        path: Path,
+        path: anyio.Path,
         mime_type: str | None,
         base_metadata: BaseFileMetadata,
     ) -> SpreadsheetMetadata:
@@ -133,18 +132,20 @@ class PDFReader(BaseFileReader):
 
     def can_read(
         self,
-        path: Path,
+        path: anyio.Path,
         mime_type: str | None,
     ) -> bool:
         return path.suffix.lower() == '.pdf' or mime_type == 'application/pdf'
 
     def read(
         self,
-        path: Path,
+        path: anyio.Path,
         mime_type: str | None,
         base_metadata: BaseFileMetadata,
     ) -> PDFMetadata:
-        with path.open('rb') as file_handle:
+        # Use the builtin open() rather than path.open() because this method
+        # runs inside anyio.to_thread.run_sync and anyio.Path.open() is async.
+        with open(path, 'rb') as file_handle:  # noqa: PTH123
             reader = PdfReader(file_handle)
             metadata = reader.metadata
 

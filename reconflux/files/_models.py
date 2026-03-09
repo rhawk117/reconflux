@@ -3,13 +3,14 @@ from __future__ import annotations
 import dataclasses as dc
 from typing import TYPE_CHECKING
 
+import anyio
+
 from rich.table import Table
 
 from reconflux.core import DataclassMixin
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from pathlib import Path
 
 
 def _stringify(value: object) -> str:
@@ -43,7 +44,7 @@ class RichMetadataMixin:
 
 @dc.dataclass(slots=True)
 class BaseFileMetadata(RichMetadataMixin, DataclassMixin):
-    path: Path
+    path: anyio.Path
     file_name: str
     mime_type: str | None
     suffix: str
