@@ -132,8 +132,6 @@ PprintOption = Annotated[
 ]
 
 
-
-
 def _list_table(title: str, column: str, items: list[str]) -> Table:
     table = Table(title=title, box=MINIMAL_DOUBLE_HEAD, show_header=False)
     table.add_column(column, overflow='fold')
@@ -237,11 +235,7 @@ class WebComponents:  # lol no those kinds
         sel_table.add_column('Selector', no_wrap=True)
         sel_table.add_column('Keys', overflow='fold')
 
-        non_empty_selectors = {
-            k: v
-            for k, v in hydration.selector_matches.items()
-            if v
-        }
+        non_empty_selectors = {k: v for k, v in hydration.selector_matches.items() if v}
         if non_empty_selectors:
             for selector, blob in non_empty_selectors.items():
                 if isinstance(blob, dict):
@@ -276,7 +270,7 @@ class WebComponents:  # lol no those kinds
     def _blob_panel(self, title: str, blob: Any) -> Panel:
         try:
             text = json.dumps(blob, indent=2, default=str)
-        except (TypeError, ValueError):
+        except TypeError, ValueError:
             text = str(blob)
         return Panel(
             Syntax(text, 'json', theme='monokai', word_wrap=True),
@@ -352,8 +346,6 @@ class WebComponents:  # lol no those kinds
         return table
 
 
-
-
 @dc.dataclass(slots=True)
 class WebConsole:
     console: Console = dc.field(default_factory=Console)
@@ -383,9 +375,7 @@ class WebConsole:
         renderables = [self.components.batch_summary_table(batch)]
 
         if batch.failed:
-            renderables.append(
-                cli_utils.error_table(batch.failed, title='Failed URLs')
-            )
+            renderables.append(cli_utils.error_table(batch.failed, title='Failed URLs'))
 
         self.console.print(Group(*renderables))
 
@@ -399,8 +389,6 @@ class WebConsole:
                 border_style='red',
             )
         )
-
-
 
 
 async def run_web_scrape(
@@ -434,8 +422,6 @@ async def run_web_batch(
 
     web.render_batch(batch)
     return 0 if batch.okay else 1
-
-
 
 
 @web_app.command('scrape')

@@ -1,4 +1,3 @@
-
 import os
 from typing import Self
 
@@ -15,6 +14,7 @@ class AppdataResolutionError(FileSystemError):
 
 
 PACKAGE_NAME = 'reconflux'
+
 
 async def resolve_appdata_site(prefix: str = '.') -> anyio.Path:
     dirname = f'{prefix}{PACKAGE_NAME}-appdata'
@@ -34,11 +34,11 @@ async def resolve_appdata_file(*parts: str, must_exist: bool = False) -> anyio.P
     path = appdata_path.joinpath(*parts)
     if not await path.is_file() and must_exist:
         raise FileSystemError(
-            f'The appdata path that must exist at `{path}` was not'
-            'found.'
+            f'The appdata path that must exist at `{path}` was notfound.'
         )
 
     return path
+
 
 async def make_appdata_subdirs(*paths: os.PathLike) -> None:
     appdata_dir = await resolve_appdata_site()
@@ -51,7 +51,6 @@ async def make_appdata_subdirs(*paths: os.PathLike) -> None:
         schedule={f'mkappdata_dir_{path}': path for path in paths},
         fail_fast=True,
     )
-
 
 
 class AppDataFile:
@@ -105,4 +104,3 @@ class AppDataFile:
 
         await self.write(contents)
         return True
-

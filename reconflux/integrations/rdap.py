@@ -253,9 +253,6 @@ def _normalize_autnum_record(
     )
 
 
-
-
-
 def rdap_clientmaker(
     performance: http.HttpPerformancePreset = 'low_latency',
     options: http.ClientOptions | None = None,
@@ -264,8 +261,6 @@ def rdap_clientmaker(
         performance
     ).use_common_headers().replace(follow_redirects=True)
     return http.new_async_httpx_client(client_options)
-
-
 
 
 class RDAPProvider(http.HTTPIntegration):

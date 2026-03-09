@@ -33,5 +33,5 @@ __all__ = (
     'ReverseDNSResult',
     'ReverseLookupRow',
     'build_command_options',
-    'get_default_blocklist'
+    'get_default_blocklist',
 )

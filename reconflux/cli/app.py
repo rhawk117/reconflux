@@ -8,6 +8,7 @@ async def setup_logging() -> None:
     logging_extension = await LoggingExtension.resolve()
     logging_extension.configure_loggers()
 
+
 def create_cli_app() -> typer.Typer:
     from reconflux.cli.dns import dns_app
     from reconflux.cli.net import net_app

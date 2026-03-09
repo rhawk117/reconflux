@@ -4,7 +4,6 @@ import dataclasses as dc
 from typing import TYPE_CHECKING
 
 import anyio
-
 from rich.table import Table
 
 from reconflux.core import DataclassMixin

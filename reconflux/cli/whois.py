@@ -239,28 +239,19 @@ class WhoisComponents:
         )
 
 
-
 @dc.dataclass(slots=True)
 class WhoisConsole:
     console: Console = dc.field(default_factory=Console)
     components: WhoisComponents = dc.field(default_factory=WhoisComponents)
 
-    def render_domain(
-        self, result: RDAPLookupResult[RDAPDomainRecord, Any]
-    ) -> None:
+    def render_domain(self, result: RDAPLookupResult[RDAPDomainRecord, Any]) -> None:
         self.console.print(self.components.domain_group(result))
 
-    def render_network(
-        self, result: RDAPLookupResult[RDAPNetworkRecord, Any]
-    ) -> None:
+    def render_network(self, result: RDAPLookupResult[RDAPNetworkRecord, Any]) -> None:
         self.console.print(self.components.network_group(result))
 
-    def render_autnum(
-        self, result: RDAPLookupResult[RDAPAutnumRecord, Any]
-    ) -> None:
+    def render_autnum(self, result: RDAPLookupResult[RDAPAutnumRecord, Any]) -> None:
         self.console.print(self.components.autnum_group(result))
-
-
 
 
 async def _fetch_domain(
@@ -297,7 +288,6 @@ async def _fetch_asn(
         max_referral_depth=max_referrals,
     ) as provider:
         return await provider.fetch_asn(asn)
-
 
 
 @whois_app.command('domain')

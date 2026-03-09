@@ -1,7 +1,8 @@
+import dataclasses as dc
 import functools
 from typing import Any, Self
+
 from pydantic import BaseModel, ConfigDict, TypeAdapter
-import dataclasses as dc
 
 
 class ReconfluxModel(BaseModel):

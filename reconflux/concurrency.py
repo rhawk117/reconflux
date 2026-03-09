@@ -243,6 +243,7 @@ class TaskExecutor[InputType, ResultType]:
             errors=dict(self._errors),
         )
 
+
 @contextlib.contextmanager
 def shielded_cancel_scope() -> Any:
     with anyio.CancelScope(shield=True) as cancel_scope:
@@ -251,7 +252,6 @@ def shielded_cancel_scope() -> Any:
 
 def current_effective_deadline() -> float:
     return anyio.current_effective_deadline()
-
 
 
 class TimeSensitiveRunner[T]:

@@ -124,6 +124,7 @@ class HydrationScrapperResults:
     window_variables: list[ScrappedWindowVariable]
     selector_matches: dict[str, list[dict] | dict]
 
+
 @dc.dataclass(slots=True)
 class HydrationScraper:
     """
@@ -132,6 +133,7 @@ class HydrationScraper:
     really inefficient if the regexes were compiled
     each time
     """
+
     window_scraper: WindowVariableScrapper = dc.field(
         default_factory=WindowVariableScrapper
     )

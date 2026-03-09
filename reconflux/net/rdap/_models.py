@@ -24,7 +24,6 @@ type RDAPLookupKind = Literal[
 ]
 
 
-
 class RDAPLinkResponse(ReconfluxModel):
     """Raw RDAP link object."""
 
@@ -264,6 +263,7 @@ class RDAPNetworkRecord(DataclassMixin):
 @dc.dataclass(slots=True)
 class RDAPAutnumRecord(DataclassMixin):
     """Normalized ASN RDAP record."""
+
     query: str
     handle: str | None = None
     start_autnum: int | None = None
@@ -281,11 +281,10 @@ class RDAPAutnumRecord(DataclassMixin):
     raw_entities_count: int = 0
 
 
-
-
 @dc.dataclass(slots=True)
 class RDAPLookupResult[Record, Response: ReconfluxModel](DataclassMixin):
     """Container for raw and normalized RDAP output."""
+
     query: str
     resolved_url: str
     kind: RDAPLookupKind

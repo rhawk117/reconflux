@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 
 console = Console()
 
+
 @contextlib.contextmanager
 def cli_exception_guard(error_message: str) -> Generator[None]:
     try:
@@ -28,6 +29,7 @@ def cli_exception_guard(error_message: str) -> Generator[None]:
         console.print(error_panel)
         raise typer.Exit(code=1) from exc
 
+
 def error_table(errors: dict[str, str], *, title: str) -> Table:
     table = Table(title=title, box=MINIMAL_DOUBLE_HEAD)
     table.add_column('Task')
@@ -41,6 +43,7 @@ def error_table(errors: dict[str, str], *, title: str) -> Table:
         table.add_row(task_name, error_text)
 
     return table
+
 
 def keyvalue_table(title: str) -> Table:
     table = Table(title=title, box=MINIMAL_DOUBLE_HEAD, show_header=False)

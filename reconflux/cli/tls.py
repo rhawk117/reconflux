@@ -124,10 +124,6 @@ FailFastOption = Annotated[
 ]
 
 
-
-
-
-
 @dc.dataclass(slots=True)
 class TLSComponents:
     def cert_table(self, result: TLSCertificateResult) -> Table:
@@ -217,8 +213,6 @@ class TLSComponents:
         return table
 
 
-
-
 @dc.dataclass(slots=True)
 class TLSConsole:
     console: Console = dc.field(default_factory=Console)
@@ -245,8 +239,6 @@ class TLSConsole:
                 border_style='red',
             )
         )
-
-
 
 
 def _build_options(port: int, timeout: float, verify: bool) -> TLSClientOptions:  # noqa: FBT001
@@ -285,7 +277,6 @@ async def run_tls_batch(
     )
     tls.render_batch(batch)
     return 0 if batch.okay else 1
-
 
 
 @tls_app.command('check')

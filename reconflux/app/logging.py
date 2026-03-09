@@ -11,8 +11,8 @@ from pydantic import ValidationError
 from reconflux.app.appdata import AppDataFile
 from reconflux.core import FileSystemError, ReconfluxModel, emit_internal_warning
 
-_FMT = "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
-_DATEFMT = "%Y-%m-%d %H:%M:%S"
+_FMT = '%(asctime)s | %(levelname)-8s | %(name)s | %(message)s'
+_DATEFMT = '%Y-%m-%d %H:%M:%S'
 
 
 def log_levelname_to_level(levelname: str) -> int:
@@ -26,12 +26,9 @@ class LoggerJsonConfig(ReconfluxModel):
     file_logging: bool = False
 
 
-
 async def get_log_config_file(filename: str = 'logger.json') -> AppDataFile:
-    return await AppDataFile.resolve(
-        filename,
-        must_exist=False
-    )
+    return await AppDataFile.resolve(filename, must_exist=False)
+
 
 @dc.dataclass(slots=True)
 class LoggingExtension:

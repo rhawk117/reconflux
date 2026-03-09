@@ -42,6 +42,7 @@ class IpInfoLiteResponse(_IpInfoResponse):
     Requires a free API token. Uses the ``api.ipinfo.io`` base host.
     Returns country-level geolocation and basic ASN data.
     """
+
     ip: str
     bogon: bool = False
     hostname: str | None = None
@@ -115,6 +116,7 @@ class IpLiteRecord(DataclassMixin):
     Contains enriched geolocation data including country metadata,
     continent, currency, and EU membership status.
     """
+
     ip: str
     hostname: str | None = None
     city: str | None = None
@@ -183,12 +185,7 @@ def ip_info_clientmaker(
     performance: http.HttpPerformancePreset = 'low_latency',
     token: str | None = None,
 ) -> httpx.AsyncClient:
-    options = (
-        http
-        .ClientOptions()
-        .performance_preset(performance)
-        .use_common_headers()
-    )
+    options = http.ClientOptions().performance_preset(performance).use_common_headers()
     if token:
         options = options.replace(params={'token': token})
     return http.new_async_httpx_client(options)

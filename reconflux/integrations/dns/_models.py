@@ -130,6 +130,7 @@ class ReverseLookupRow(DataclassMixin):
     hostname : str
         Reverse-resolved hostname.
     """
+
     ip_address: str
     hostname: str
 
@@ -415,5 +416,6 @@ class CanonicalNameResult(DataclassMixin):
 
     hostname: str
     canonical_name: str
+
 
 type DNSIntegrationResult = DomainDNSResult | ReverseDNSResult | EmailDNSResult

@@ -6,7 +6,6 @@ import warnings as py_warnings
 class ReconfluxWarning(UserWarning):
     """The base class for all of the warnings emitted by reconflux"""
 
-    pass
 
 
 def emit_internal_warning(

@@ -53,6 +53,7 @@ class BatchFileAnalysisResult(DataclassMixin):
     results : TaskExecutorResult[FileAnalysisResult]
         Per-file results and per-file errors keyed by the path string.
     """
+
     results: TaskExecutorResult[FileAnalysisResult]
 
     @property
@@ -80,7 +81,6 @@ def _to_anyio_path(path: str | anyio.Path) -> anyio.Path:
     return anyio.Path(path)
 
 
-
 @dc.dataclass(slots=True)
 class FileAnalysisIntegration:
     """Reconflux file-metadata integration
@@ -95,8 +95,8 @@ class FileAnalysisIntegration:
         Configured analyzer. When omitted, ``default_analyzer()`` is used,
         which includes all three built-in readers.
     """
-    reader: FileMetadataReader = dc.field(default_factory=FileMetadataReader.create)
 
+    reader: FileMetadataReader = dc.field(default_factory=FileMetadataReader.create)
 
     async def analyze(self, path: str | anyio.Path) -> FileAnalysisResult:
         """Analyze a single file and return its metadata.
@@ -210,10 +210,7 @@ class FileAnalysisIntegration:
             )
 
         pattern = f'**/{glob}' if recursive else glob
-        paths = [
-            p async for p in dir_path.glob(pattern)
-            if await p.is_file()
-        ]
+        paths = [p async for p in dir_path.glob(pattern) if await p.is_file()]
 
         return await self.analyze_many(
             paths,
